@@ -1,0 +1,100 @@
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentTop="true"
+        android:maxWidth="10dp"
+        android:maxHeight="35dp"
+        android:minHeight="35dp"
+        android:textSize="25dp"
+        android:textColor="#010001"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:text="@string/conflux_instance_domain"
+        android:id="@+id/tv_title_instance"
+        android:hint="@string/default_instance_url"
+        />
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_instanceURL"
+        android:hint="@string/default_instance_url"
+        android:layout_below="@+id/tv_title_instance"
+        android:imeOptions="actionNext"
+        android:nextFocusDown="@+id/et_instancePort"
+        android:inputType="textUri|text"
+        android:textSize="20dp"/>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:maxWidth="10dp"
+        android:maxHeight="35dp"
+        android:minHeight="35dp"
+        android:textSize="25dp"
+        android:textColor="#010001"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:text="@string/port"
+        android:layout_below="@+id/et_instanceURL"
+        android:id="@+id/tv_title_instance_port"
+        />
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_title_instance_port"
+        android:id="@+id/et_instancePort"
+        android:inputType="number"
+        android:hint="@string/default_port"
+        android:imeOptions="actionNext"
+        android:nextFocusDown="@+id/et_tenantIdentifier"
+        android:textSize="25dp"
+        android:gravity="center"
+        />
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#010001"
+        android:layout_below="@+id/et_instancePort"
+        android:id="@+id/tv_constructed_instance_url"
+        android:layout_weight="2"
+        />
+
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:maxWidth="10dp"
+        android:maxHeight="35dp"
+        android:minHeight="35dp"
+        android:textSize="25dp"
+        android:textColor="#010001"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:layout_below="@+id/tv_constructed_instance_url"
+        android:text="@string/tenant_identifier"
+        android:id="@+id/tv_tenant_identifier" />
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@id/tv_tenant_identifier"
+        android:id="@+id/et_tenantIdentifier"
+        android:inputType="text"
+        android:hint="@string/default_tenant"
+        android:gravity="center"/>
+</RelativeLayout>
+
+

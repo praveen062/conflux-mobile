@@ -382,18 +382,19 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.offline_menu, menu);
+        getMenuInflater().inflate(R.menu.options, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.d(TAG, "onOptionsItemSelected: " + item.getItemId());
+        Log.d(TAG, "onOptionsItemSelected: " + item.getTitle());
         switch (item.getItemId()) {
             case R.id.offline:
                 startActivity(new Intent(this, OfflineCenterInputActivity.class));
                 break;
-
+            case R.id.setting :
+                startActivity(new Intent(this,Settings.class));
             default: //DO NOTHING
                 break;
         }

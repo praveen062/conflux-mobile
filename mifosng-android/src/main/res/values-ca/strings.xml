@@ -89,7 +89,7 @@
     <string name="menu_take_photo">Afegir nova fotografia</string>
     <string name="message_field_required">és obligatori i no pot estar buit</string>
     <string name="message_no_identifiers_available">No hi ha identificacions disponibles per aquest client</string>
-    <string name="mifos_instance_domain">Domini de la instància Mifos</string>
+    <string name="conflux_instance_domain">Domini de la instància Conflux-CBS</string>
     <string name="name">Nom</string>
     <string name="office">Oficina</string>
     <string name="office_id">ID de l\'oficina</string>
@@ -144,7 +144,7 @@
     <string name="uploaded_successfully">%1$s Carregat sense errors</string>
     <string name="username">Usuari</string>
     <string name="withdrawal">Retirat</string>
-    <string name="app_name">MifosXDroid</string>
+    <string name="app_name">Conflux-CBS</string>
     <string name="client_image_updated">Client image updated</string>
     <string name="failed_to_capture_image">Failed to capture image</string>
     <string name="new_text">Nou Text</string>

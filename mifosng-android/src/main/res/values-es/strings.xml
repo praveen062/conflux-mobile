@@ -98,7 +98,7 @@
     <string name="overdue">Vencido</string>
     <string name="offline">Fuera de línea *</string>
     <string name="office_id">ID de la oficina</string>
-    <string name="mifos_instance_domain">Domino de la instancia Mifos</string>
+    <string name="confluux_instance_domain">Domino de la instancia Conflux-CBS</string>
     <string name="message_no_identifiers_available">No hay identificadores disponibles para este cliente.</string>
     <string name="message_field_required">es obligatorio y no puede estar vacio</string>
     <string name="collection_sheet">Recolección de datos</string>
@@ -144,7 +144,7 @@
     <string name="menu_remove_photo">Eliminar fotografía</string>
     <string name="menu_take_photo">Añadir nueva fotografía</string>
     <string name="toast_welcome">Bienvenido</string>
-    <string name="app_name">MifosXDroid</string>
+    <string name="app_name">Conflux-CBS</string>
     <string name="failed_to_capture_image">Failed to capture image</string>
     <string name="new_text">Nuevo Texto</string>
     <string name="small_text">Pequeño Texto</string>
