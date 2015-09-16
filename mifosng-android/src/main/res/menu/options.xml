@@ -12,6 +12,11 @@
         android:title="@string/offline"
         android:showAsAction="ifRoom"
         android:enabled="true"/>
+    <item
+        android:id="@+id/setting"
+        android:title="@string/settings"
+        android:showAsAction="ifRoom"
+        android:enabled="true"/>
 
 
 </menu>
