@@ -61,7 +61,13 @@ public class SplashScreenActivity extends ActionBarActivity {
          */
         if (authenticationToken.equals("NA")) {
             //if authentication key is not present
-            startActivity(new Intent(SplashScreenActivity.this, LoginActivity.class));
+            Intent intent=new Intent(SplashScreenActivity.this, LoginActivity.class);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(User.AUTHENTICATION_KEY, "NA");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            editor.commit();
+            startActivity(intent);
         } else {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             String instanceURL = sharedPreferences.getString(Constants.INSTANCE_URL_KEY, null);

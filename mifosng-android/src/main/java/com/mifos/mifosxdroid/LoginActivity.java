@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.mifos.exceptions.ShortOfLengthException;
 import com.mifos.mifosxdroid.online.DashboardFragmentActivity;
 import com.mifos.objects.User;
+import com.mifos.objects.noncore.DisplayAlert;
 import com.mifos.services.API;
 import com.mifos.utils.Constants;
 import com.mifos.utils.MifosApplication;
@@ -60,14 +61,16 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
     public static final String PROTOCOL_HTTP = "http://";
     public static final String PROTOCOL_HTTPS = "https://";
     public static final String API_PATH = "/mifosng-provider/api/v1";
+    //private static final String DEFAULT_TENANT ="default" ;
+    private static final String DEFALUT_PORT ="80" ;
     SharedPreferences sharedPreferences;
-    @InjectView(R.id.et_instanceURL) EditText et_instanceURL;
+   // @InjectView(R.id.et_instanceURL) EditText et_instanceURL;
     @InjectView(R.id.et_username) EditText et_username;
     @InjectView(R.id.et_password) EditText et_password;
     @InjectView(R.id.bt_login) Button bt_login;
-    @InjectView(R.id.tv_constructed_instance_url) TextView tv_constructed_instance_url;
-    @InjectView(R.id.et_tenantIdentifier) EditText et_tenantIdentifier;
-    @InjectView(R.id.et_instancePort) EditText et_port;
+   // @InjectView(R.id.tv_constructed_instance_url) TextView tv_constructed_instance_url;
+    //@InjectView(R.id.et_tenantIdentifier) EditText et_tenantIdentifier;
+    //@InjectView(R.id.et_instancePort) EditText et_port;
     private String username;
     private String instanceURL;
     private String password;
@@ -80,6 +83,10 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
     private Pattern ipAddressPattern;
     private Matcher ipAddressMatcher;
     private Integer port = null;
+    SharedPreferences settingsPreferences;
+    String TenantIdentifier;
+    String previouslyEnteredPort;
+    String url;
 
     private API api;
 
@@ -90,17 +97,25 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
 
         context = LoginActivity.this;
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String previouslyEnteredUrl = sharedPreferences.getString(Constants.INSTANCE_URL_KEY,
-                getString(R.string.default_instance_url));
-        String previouslyEnteredPort = sharedPreferences.getString(Constants.INSTANCE_PORT_KEY,
-                "80");
+       sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+       // String previouslyEnteredUrl = sharedPreferences.getString(Constants.INSTANCE_URL_KEY,
+         //       getString(R.string.default_instance_url));
+        //String previouslyEnteredPort = sharedPreferences.getString(Constants.INSTANCE_PORT_KEY,
+          //      "80");
         authenticationToken = sharedPreferences.getString(User.AUTHENTICATION_KEY, "NA");
+        settingsPreferences = getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
+        //TenantIdentifier=settingsPreferences.getString("TenantIdentifier", DEFAULT_TENANT);
+        TenantIdentifier=settingsPreferences.getString("TenantIdentifier", "");
+        previouslyEnteredPort=settingsPreferences.getString("Port",DEFALUT_PORT);
+       // authenticationToken=settingsPreferences.getString(User.AUTHENTICATION_KEY,"NA");
+        url=settingsPreferences.getString("ConstructedInstanceUrl","");
+
 
         ButterKnife.inject(this);
+
         setupUI();
 
-        domainNamePattern = Pattern.compile(DOMAIN_NAME_REGEX_PATTERN);
+       /* domainNamePattern = Pattern.compile(DOMAIN_NAME_REGEX_PATTERN);
         ipAddressPattern = Pattern.compile(IP_ADDRESS_REGEX_PATTERN);
 
         tv_constructed_instance_url.setText(PROTOCOL_HTTPS + previouslyEnteredUrl + API_PATH);
@@ -149,10 +164,10 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
 
                 updateMyInstanceUrl();
             }
-        });
+        });*/
     }
 
-    private void updateMyInstanceUrl() {
+   /* private void updateMyInstanceUrl() {
         String textUnderConstruction;
 
         if(!et_port.getEditableText().toString().isEmpty()) {
@@ -169,7 +184,7 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
         } else {
             tv_constructed_instance_url.setTextColor(getResources().getColor(R.color.deposit_green));
         }
-    }
+    }*/
 
     public void setupUI() {
         progressDialog = new ProgressDialog(context, ProgressDialog.STYLE_SPINNER);
@@ -179,7 +194,7 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
 
     public boolean validateUserInputs() throws ShortOfLengthException {
 
-        String urlInputValue = et_instanceURL.getEditableText().toString();
+      /*  String urlInputValue = et_instanceURL.getEditableText().toString();
         try {
             if(!validateURL(urlInputValue)) {
                 return false;
@@ -197,7 +212,7 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
         } catch (URISyntaxException uriException) {
             throw new ShortOfLengthException("Instance URL", 5);
         }
-
+*/
         username = et_username.getEditableText().toString();
         if (username.length() < 5) {
             throw new ShortOfLengthException("Username", 5);
@@ -208,34 +223,41 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
             throw new ShortOfLengthException("Password", 6);
         }
 
-        if (!et_tenantIdentifier.getEditableText().toString().isEmpty()) {
+      /*  if (!et_tenantIdentifier.getEditableText().toString().isEmpty()) {
 
         }
-
+*/
         return true;
     }
 
-    public String constructInstanceUrl(String validDomain, Integer port) {
+  /*  public String constructInstanceUrl(String validDomain, Integer port) {
         if (port != null) {
             return PROTOCOL_HTTPS + validDomain + ":" + port + API_PATH;
         } else {
             return PROTOCOL_HTTPS + validDomain + API_PATH;
         }
     }
-
+*/
     @Override
     public void success(User user, Response response) {
         ((MifosApplication) getApplication()).api = api;
         progressDialog.dismiss();
+
         Toast.makeText(context, getString(R.string.toast_welcome)+" " + user.getUsername(), Toast.LENGTH_SHORT).show();
-        saveLastAccessedInstanceUrl(instanceURL);
-        saveLastAccessedInstanceDomainName(et_instanceURL.getEditableText().toString());
-        if (!et_port.getEditableText().toString().trim().isEmpty()) {
-            saveLastAccessedInstancePort(et_port.getEditableText().toString());
-        }
-        String lastAccessedTenantIdentifier =
-                et_tenantIdentifier.getEditableText().toString().trim().isEmpty()
-                        || et_tenantIdentifier.getEditableText() == null ? "default" : et_tenantIdentifier.getEditableText().toString().trim();
+        //saveLastAccessedInstanceUrl(instanceURL);
+        saveLastAccessedInstanceUrl(url);
+
+        //saveLastAccessedInstanceDomainName(et_instanceURL.getEditableText().toString());
+        saveLastAccessedInstanceDomainName(url);
+       /* if (!et_port.getEditableText().toString().trim().isEmpty()) {
+            //saveLastAccessedInstancePort(et_port.getEditableText().toString());
+            saveLastAccessedInstancePort(previouslyEnteredPort);
+        }*/
+        //String lastAccessedTenantIdentifier =
+          //      et_tenantIdentifier.getEditableText().toString().trim().isEmpty()
+            //            || et_tenantIdentifier.getEditableText() == null ? "default" : et_tenantIdentifier.getEditableText().toString().trim();
+        String lastAccessedTenantIdentifier = TenantIdentifier;
+
         saveLastAccessedTenant(lastAccessedTenantIdentifier);
         saveAuthenticationKey("Basic " + user.getBase64EncodedAuthenticationKey());
         Intent intent = new Intent(LoginActivity.this, DashboardFragmentActivity.class);
@@ -292,14 +314,47 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
 
     private void login(boolean shouldByPassSSLSecurity) {
         try {
-            if (validateUserInputs())
+            if ( url !=""||TenantIdentifier!="") {
+                if (validateUserInputs())
+
+                    Toast.makeText(context, "URL: " + url + "    Tenant:" + TenantIdentifier, Toast.LENGTH_LONG).show();
+
+
                 progressDialog.show();
-            api = new API(instanceURL, et_tenantIdentifier.getEditableText().toString().trim(), shouldByPassSSLSecurity);
-            api.userAuthService.authenticate(username, password, this);
-        } catch (ShortOfLengthException e) {
-            Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
-        }
+                //api = new API(instanceURL, et_tenantIdentifier.getEditableText().toString().trim(), shouldByPassSSLSecurity);
+                api = new API(url, TenantIdentifier, shouldByPassSSLSecurity);
+                api.userAuthService.authenticate(username, password, this);
+            }
+            else
+            {
+                String msg="Please go to settings and provide the url and Tenant ID.";
+                String title="Alert";
+                String button="OK";
+                DisplayAlert.DisplayAlertMessageWithOkButton(context,msg,title,android.R.drawable.stat_sys_warning,button);
+            }
+
+            }catch(ShortOfLengthException e){
+                Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+            }
+
     }
+
+    public void alertMessage()
+    {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setTitle("Alert");
+        alertDialogBuilder
+                .setMessage("Please go to settings and provide the url and Tenant ID.")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
 
     @OnEditorAction(R.id.et_password)
     public boolean passwordSubmitted(KeyEvent keyEvent) {

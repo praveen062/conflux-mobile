@@ -67,6 +67,7 @@ public class DashboardFragmentActivity extends ActionBarActivity {
                 break;
             case R.id.logout:
                 startActivity(new Intent(DashboardFragmentActivity.this, LogoutActivity.class));
+                finish();
                 break;
             case R.id.mItem_create_new_client:
                 openCreateClient();

@@ -536,7 +536,7 @@ public class API {
 
         @Headers({ACCEPT_JSON, CONTENT_TYPE_JSON})
         @POST(APIEndPoint.AUTHENTICATION)
-        public void authenticate(@Query("username") String username, @Query("password") String password, Callback<User> userCallback);
+        public void authenticate(@Query("username") String username, @Query("password") String password, Callback<User> userFCallback);
 
     }
 
