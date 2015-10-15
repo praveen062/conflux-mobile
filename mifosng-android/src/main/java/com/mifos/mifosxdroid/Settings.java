@@ -3,6 +3,7 @@ package com.mifos.mifosxdroid;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mifos.objects.User;
+import com.mifos.utils.Constants;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import org.apache.commons.validator.routines.InetAddressValidator;
@@ -34,7 +37,6 @@ public class Settings extends ActionBarActivity {
     EditText et_instanceURL;
     @InjectView(R.id.tv_constructed_instance_url)
     TextView tv_constructed_instance_url;
-    Context context;
     @InjectView(R.id.et_tenantIdentifier) EditText et_tenantIdentifier;
     @InjectView(R.id.et_instancePort) EditText et_port;
     SharedPreferences settingsPreferences;
@@ -47,9 +49,9 @@ public class Settings extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        Log.d("content","inside the Settings onCreate method");
-        context = Settings.this;
-        settingsPreferences = getSharedPreferences("AppSettings",Context.MODE_PRIVATE);
+        Log.d("content", "inside the Settings onCreate method");
+        Constants.applicationContext = Settings.this;
+        settingsPreferences = PreferenceManager.getDefaultSharedPreferences(Constants.applicationContext);
         String previouslyEnteredUrl=settingsPreferences.getString("domainName","");
         String TenantIdentifier=settingsPreferences.getString("TenantIdentifier","");
         String previouslyEnteredPort=settingsPreferences.getString("Port", DEFALUT_PORT);
@@ -139,7 +141,6 @@ public class Settings extends ActionBarActivity {
     }
     public void saveSettings()
     {
-        settingsPreferences = getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = settingsPreferences.edit();
         Toast.makeText(this, "Domain Name : " + et_instanceURL.getText().toString() + " Tenant : " + et_tenantIdentifier.getText().toString() + " has been saved", Toast.LENGTH_LONG).show();
         edit.putString("domainName", et_instanceURL.getText().toString().trim());
@@ -178,7 +179,6 @@ public class Settings extends ActionBarActivity {
         isUrl = checkForUrl(tv_constructed_instance_url.getText().toString().trim());
         if(isIP_Address)
         {
-            et_port.requestFocus();
             if(et_port.getText().toString().equals("")) {
                 System.out.println("invalid ip");
                 isValidIp =false;

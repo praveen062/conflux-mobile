@@ -53,7 +53,7 @@ public class ClientListFragment extends Fragment {
     List<Client> clientList = new ArrayList<Client>();
     private Context context;
     private int offset = 0;
-    private int limit = 200;
+    private int limit = 50;
     private int index = 0;
     private int top = 0;
 
@@ -141,11 +141,12 @@ public class ClientListFragment extends Fragment {
 
             swipeRefreshLayout.setRefreshing(true);
             //Get a Client List
-            ((MifosApplication)getActivity().getApplication()).api.clientService.listAllClients(new Callback<Page<Client>>() {
+            ((MifosApplication)getActivity().getApplication()).api.clientService.listAllClients(offset, limit,new Callback<Page<Client>>() {
                 @Override
                 public void success(Page<Client> page, Response response) {
                     clientList = page.getPageItems();
                     inflateClientList();
+                    offset=+limit+1;
                     swipeRefreshLayout.setRefreshing(false);
 
                 }

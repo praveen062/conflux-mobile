@@ -114,11 +114,15 @@ public class API {
     public IdentifierService identifierService;
     public OfficeService officeService;
     public StaffService staffService;
+    private RestAdapter.Builder restAdapterBuilder;
+    private static TrustManager[] trustAllCerts;
+    private static SSLContext sslContext;
+    private static SSLSocketFactory sslSocketFactory;
 
 
     public API(final String url, final String tenantIdentifier, boolean shouldByPassSSLSecurity) {
 
-        RestAdapter.Builder restAdapterBuilder = new RestAdapter.Builder();
+        restAdapterBuilder = new RestAdapter.Builder();
         restAdapterBuilder.setEndpoint(url);
         if (shouldByPassSSLSecurity) {
             restAdapterBuilder.setClient(new OkClient(getUnsafeOkHttpClient()));
@@ -169,12 +173,17 @@ public class API {
         staffService = restAdapter.create(StaffService.class);
     }
 
+    public void getCertificate()
+    {
+        getUnsafeOkHttpClient();
+    }
+
 
 
     private  OkHttpClient getUnsafeOkHttpClient() {
         try {
             // Create a trust manager that does not validate certificate chains
-            final TrustManager[] trustAllCerts = new TrustManager[] {
+                    trustAllCerts = new TrustManager[] {
                     new X509TrustManager() {
                         @Override
                         public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
@@ -192,10 +201,10 @@ public class API {
             };
 
             // Install the all-trusting trust manager
-            final SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext = SSLContext.getInstance("SSL");
             sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
             // Create an ssl socket factory with our all-trusting manager
-            final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+            sslSocketFactory = sslContext.getSocketFactory();
 
             OkHttpClient okHttpClient = new OkHttpClient();
             okHttpClient.setSslSocketFactory(sslSocketFactory);
@@ -267,6 +276,10 @@ public class API {
         @GET(APIEndPoint.CENTERS + "/{centerId}?associations=groupMembers")
         public void getAllGroupsForCenter(@Path("centerId") int centerId,
                                           Callback<CenterWithAssociations> centerWithAssociationsCallback);
+
+        @Headers({"Accept: application/octet-stream"})
+        @GET(APIEndPoint.CLIENTS+"/{clientId}/images?maxHeight=150&maxWidth=120")
+        public void getClientImage(@Path("clientId") int clientId, Callback<Response> callback);
 
         @Headers({ACCEPT_JSON, CONTENT_TYPE_JSON})
         @POST(APIEndPoint.CENTERS + "/{centerId}?command=generateCollectionSheet")
@@ -642,4 +655,5 @@ public class API {
         }
 
     }
+
 }

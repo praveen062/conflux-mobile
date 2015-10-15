@@ -5,13 +5,18 @@
 
 package com.mifos.utils;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.mifos.services.API;
 import com.orm.SugarApp;
+
+import java.io.Serializable;
 
 /**
  * Created by ishankhanna on 13/03/15.
  */
-public class MifosApplication extends SugarApp {
+public class MifosApplication extends SugarApp implements Serializable {
 
     public API api;
 
