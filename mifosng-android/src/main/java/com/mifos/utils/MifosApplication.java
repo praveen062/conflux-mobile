@@ -16,7 +16,7 @@ import java.io.Serializable;
 /**
  * Created by ishankhanna on 13/03/15.
  */
-public class MifosApplication extends SugarApp implements Serializable {
+public class MifosApplication extends SugarApp {
 
     public API api;
 

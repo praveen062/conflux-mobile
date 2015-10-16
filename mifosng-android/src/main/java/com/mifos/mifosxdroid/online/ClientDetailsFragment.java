@@ -878,7 +878,7 @@ public class ClientDetailsFragment extends Fragment implements GooglePlayService
         @Override
         protected Void doInBackground(Integer... integers) {
             Log.d(TAG, "In background now");
-            ((MifosApplication) getActivity().getApplication()).api.centerService.getClientImage(integers[0], new Callback<Response>() {
+            ((MifosApplication) getActivity().getApplication()).api.clientService.getClientImage(integers[0],150,120, new Callback<Response>() {
                 @Override
                 public void success(Response response, Response response2) {
                     try {
@@ -887,7 +887,6 @@ public class ClientDetailsFragment extends Fragment implements GooglePlayService
                         //getting the image in the application/octet-stream format and converting it to Bitmap to set it to image view
                         bmp=BitmapFactory.decodeByteArray(b,0,b.length);
                         if (bmp != null) {
-                            System.out.println("bmp is not null");
                             iv_clientImage.setImageBitmap(bmp);
                         } else {
                             System.out.println("bmp is null");

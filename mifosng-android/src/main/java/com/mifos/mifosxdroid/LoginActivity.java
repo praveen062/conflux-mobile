@@ -71,6 +71,7 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
     String TenantIdentifier;
     String previouslyEnteredPort;
     String url;
+    SharedPreferences.Editor edit;
 
     private API api;
 
@@ -83,9 +84,9 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
 
         settingsPreferences = PreferenceManager.getDefaultSharedPreferences(Constants.applicationContext);
         authenticationToken = settingsPreferences.getString(User.AUTHENTICATION_KEY, "NA");
-        TenantIdentifier=settingsPreferences.getString("TenantIdentifier", "");
-        previouslyEnteredPort=settingsPreferences.getString("Port",DEFALUT_PORT);
-        url=settingsPreferences.getString("ConstructedInstanceUrl","");
+        TenantIdentifier=settingsPreferences.getString(Constants.TENANT_IDENTIFIER_KEY, "");
+        previouslyEnteredPort=settingsPreferences.getString(Constants.INSTANCE_PORT_KEY,DEFALUT_PORT);
+        url=settingsPreferences.getString(Constants.INSTANCE_URL_KEY,"");
         ButterKnife.inject(this);
         setupUI();
     }
@@ -117,7 +118,7 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
         progressDialog.dismiss();
         Toast.makeText(context, getString(R.string.toast_welcome)+" " + user.getUsername(), Toast.LENGTH_SHORT).show();
         saveLastAccessedInstanceUrl(url);
-        saveLastAccessedInstanceDomainName(url);
+       // saveLastAccessedInstanceDomainName(url);
         String lastAccessedTenantIdentifier = TenantIdentifier;
         saveLastAccessedTenant(lastAccessedTenantIdentifier);
         saveAuthenticationKey("Basic " + user.getBase64EncodedAuthenticationKey());
@@ -154,6 +155,10 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
                 .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Log.i("User Login Info","User aggred for continuing with the unsafe connection");
+                        edit = settingsPreferences.edit();
+                        edit.putBoolean("Trust",true);
+                        edit.commit();
                         login(true);
                     }
                 })
@@ -170,6 +175,9 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
 
     @OnClick(R.id.bt_login)
     public void onLoginClick(Button button){
+        edit = settingsPreferences.edit();
+        edit.putBoolean("Trust",false);
+        edit.commit();
         login(false);
     }
 
@@ -233,11 +241,11 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
      *
      * @param instanceDomain
      */
-    public void saveLastAccessedInstanceDomainName(String instanceDomain) {
+   /* public void saveLastAccessedInstanceDomainName(String instanceDomain) {
         SharedPreferences.Editor editor = settingsPreferences.edit();
         editor.putString(Constants.INSTANCE_DOMAIN_KEY, instanceDomain);
         editor.apply();
-    }
+    }*/
 
     /**
      * Stores the complete instance URL in shared preferences

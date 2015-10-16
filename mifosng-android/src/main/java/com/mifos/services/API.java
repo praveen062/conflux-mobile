@@ -227,12 +227,12 @@ public class API {
         Callback<T> cb = new Callback<T>() {
             @Override
             public void success(T o, Response response) {
-                System.out.println("Object " + o);
+               // System.out.println("Object " + o);
             }
 
             @Override
             public void failure(RetrofitError retrofitError) {
-                System.out.println("Error: " + retrofitError);
+                //System.out.println("Error: " + retrofitError);
             }
         };
 
@@ -243,12 +243,13 @@ public class API {
         Callback<List<T>> cb = new Callback<List<T>>() {
             @Override
             public void success(List<T> o, Response response) {
-                System.out.println("Object " + o);
+
+                //System.out.println("Object " + o);
             }
 
             @Override
             public void failure(RetrofitError retrofitError) {
-                System.out.println("Error: " + retrofitError);
+               // System.out.println("Error: " + retrofitError);
             }
         };
 
@@ -276,10 +277,6 @@ public class API {
         @GET(APIEndPoint.CENTERS + "/{centerId}?associations=groupMembers")
         public void getAllGroupsForCenter(@Path("centerId") int centerId,
                                           Callback<CenterWithAssociations> centerWithAssociationsCallback);
-
-        @Headers({"Accept: application/octet-stream"})
-        @GET(APIEndPoint.CLIENTS+"/{clientId}/images?maxHeight=150&maxWidth=120")
-        public void getClientImage(@Path("clientId") int clientId, Callback<Response> callback);
 
         @Headers({ACCEPT_JSON, CONTENT_TYPE_JSON})
         @POST(APIEndPoint.CENTERS + "/{centerId}?command=generateCollectionSheet")
@@ -344,8 +341,12 @@ public class API {
 
         //TODO: Implement when API Fixed
         //@Headers({"Accept: application/octet-stream", CONTENT_TYPE_JSON})
-        @GET("/clients/{clientId}/images")
-        public void getClientImage(@Path("clientId") int clientId, Callback<TypedString> callback);
+      //  @GET("/clients/{clientId}/images")
+        //public void getClientImage(@Path("clientId") int clientId, Callback<TypedString> callback);
+
+        @Headers({"Accept: application/octet-stream"})
+        @GET(APIEndPoint.CLIENTS+"/{clientId}/images")
+        public void getClientImage(@Path("clientId") int clientId,@Query("maxHeight") int maxHeight,@Query("maxWidth") int maxWidth, Callback<Response> callback);
 
         @Headers({ACCEPT_JSON, CONTENT_TYPE_JSON})
         @POST(APIEndPoint.CLIENTS)

@@ -44,20 +44,20 @@ public class Settings extends ActionBarActivity {
     boolean isUrl;
     boolean isValidIp =false;
     boolean isIP_Address=false;
+    private static final String TAG="Setting";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        Log.d("content", "inside the Settings onCreate method");
         Constants.applicationContext = Settings.this;
         settingsPreferences = PreferenceManager.getDefaultSharedPreferences(Constants.applicationContext);
-        String previouslyEnteredUrl=settingsPreferences.getString("domainName","");
-        String TenantIdentifier=settingsPreferences.getString("TenantIdentifier","");
-        String previouslyEnteredPort=settingsPreferences.getString("Port", DEFALUT_PORT);
+        String previouslyEnteredUrl=settingsPreferences.getString(Constants.INSTANCE_DOMAIN_KEY,"");
+        String TenantIdentifier=settingsPreferences.getString(Constants.TENANT_IDENTIFIER_KEY,"");
+        String previouslyEnteredPort=settingsPreferences.getString(Constants.INSTANCE_PORT_KEY, DEFALUT_PORT);
         isValidIp =settingsPreferences.getBoolean("isIpAddress",false);
-        Log.d("content 1", "inside the onCreate method after auth");
         ButterKnife.inject(this);
+        Log.i(TAG, "Settings View has been created");
         if(previouslyEnteredUrl.isEmpty()||previouslyEnteredUrl.equals("")||previouslyEnteredUrl==null)
         {
             tv_constructed_instance_url.setText("");
@@ -67,9 +67,8 @@ public class Settings extends ActionBarActivity {
 
             et_instanceURL.setText(previouslyEnteredUrl);
             et_port.setText(String.valueOf(previouslyEnteredPort));
-        System.out.println(et_port.getEditableText().length());
-        constructedurl = constructInstanceUrl(et_instanceURL.getEditableText().toString(), et_port.getEditableText().toString());
-        tv_constructed_instance_url.setText(constructedurl);
+            constructedurl = constructInstanceUrl(et_instanceURL.getEditableText().toString().trim(), et_port.getEditableText().toString().trim());
+            tv_constructed_instance_url.setText(constructedurl);
             et_instanceURL.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -142,18 +141,17 @@ public class Settings extends ActionBarActivity {
     public void saveSettings()
     {
         SharedPreferences.Editor edit = settingsPreferences.edit();
-        Toast.makeText(this, "Domain Name : " + et_instanceURL.getText().toString() + " Tenant : " + et_tenantIdentifier.getText().toString() + " has been saved", Toast.LENGTH_LONG).show();
-        edit.putString("domainName", et_instanceURL.getText().toString().trim());
-        edit.putString("TenantIdentifier", et_tenantIdentifier.getText().toString());
-        edit.putString("ConstructedInstanceUrl", tv_constructed_instance_url.getText().toString());
+        Toast.makeText(this, "Domain Name : " + et_instanceURL.getText().toString().trim() + " Tenant : " + et_tenantIdentifier.getText().toString() + " has been saved", Toast.LENGTH_SHORT).show();
+        edit.putString(Constants.INSTANCE_DOMAIN_KEY, et_instanceURL.getText().toString().trim());
+        edit.putString(Constants.TENANT_IDENTIFIER_KEY, et_tenantIdentifier.getText().toString().trim());
+        edit.putString(Constants.INSTANCE_URL_KEY, tv_constructed_instance_url.getText().toString().trim());
         if(et_port.getEditableText().length()<=0)
         {
-            edit.putString("Port", null);
-            System.out.println("port number has not entered");
+            edit.putString(Constants.INSTANCE_PORT_KEY, null);
         }
         else
         {
-            edit.putString("Port", et_port.getText().toString());
+            edit.putString(Constants.INSTANCE_PORT_KEY, et_port.getText().toString().trim());
         }
         edit.putString(User.AUTHENTICATION_KEY, "NA");
         edit.putBoolean("isIpAddress", isValidIp);
@@ -180,13 +178,11 @@ public class Settings extends ActionBarActivity {
         if(isIP_Address)
         {
             if(et_port.getText().toString().equals("")) {
-                System.out.println("invalid ip");
                 isValidIp =false;
                 tv_constructed_instance_url.setTextColor(getResources().getColor(R.color.red));
             }
             else
             {
-                System.out.println("valid ip");
                 isValidIp =true;
                 textUnderConstruction = constructInstanceUrl(et_instanceURL.getEditableText().toString(), et_port.getText().toString().trim());
                 tv_constructed_instance_url.setText(textUnderConstruction);
@@ -195,8 +191,6 @@ public class Settings extends ActionBarActivity {
         }
         if(isUrl&&!isIP_Address)
         {
-            System.out.println("valid url");
-
             tv_constructed_instance_url.setTextColor(getResources().getColor(R.color.deposit_green));
         }
         if(!isUrl&&!isIP_Address)
@@ -219,7 +213,6 @@ public class Settings extends ActionBarActivity {
 
     public String constructInstanceUrl(String validDomain, String port) {
         if (port.length()>0) {
-            System.out.println(port+"yooooooooooooo||"+port.length());
             return PROTOCOL_HTTPS + validDomain + ":" + port + API_PATH;
         } else {
             if(validDomain.contains(PROTOCOL_HTTP)||validDomain.contains(PROTOCOL_HTTPS))
