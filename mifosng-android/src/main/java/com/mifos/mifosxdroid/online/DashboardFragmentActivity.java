@@ -5,32 +5,22 @@
 
 package com.mifos.mifosxdroid.online;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
-
 import com.mifos.mifosxdroid.OfflineCenterInputActivity;
 import com.mifos.mifosxdroid.R;
-import com.mifos.utils.Constants;
 import com.mifos.utils.FragmentConstants;
 import com.mifos.utils.MifosApplication;
-
 import javax.annotation.Resource;
-
 /**
  * Created by ishankhanna on 09/02/14.
  */
-
 
 public class DashboardFragmentActivity extends ActionBarActivity {
 
@@ -48,18 +38,6 @@ public class DashboardFragmentActivity extends ActionBarActivity {
         fragmentTransaction.commit();
         android.support.v7.app.ActionBar actionBar = getSupportActionBar();
         actionBar.setHomeButtonEnabled(true);
-        /*Button btn=(Button)findViewById();
-        btn.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Toast.makeText(getApplication(),"hello",Toast.LENGTH_SHORT).show();
-
-            }
-        });*/
-
-
     }
 
 
@@ -79,11 +57,11 @@ public class DashboardFragmentActivity extends ActionBarActivity {
             case R.id.item_centers:
                 startActivity(new Intent(this, CentersActivity.class));
                 break;
-            case R.id.mItem_list :
+            case R.id.mItem_list:
                 loadClientList();
                 break;
             //case R.id.item_collection_sheet :
-                //startActivity(new Intent(DashboardFragmentActivity.this, GenerateCollectionSheet.class));
+            //startActivity(new Intent(DashboardFragmentActivity.this, GenerateCollectionSheet.class));
             //    break;
             case R.id.item_offline_centers:
                 startActivity(new Intent(this, OfflineCenterInputActivity.class));
@@ -96,8 +74,8 @@ public class DashboardFragmentActivity extends ActionBarActivity {
                 openCreateClient();
                 break;
             case android.R.id.home:
-                    startActivity(new Intent(this, DashboardFragmentActivity.class));
-                    finish();
+                startActivity(new Intent(this, DashboardFragmentActivity.class));
+                finish();
                 break;
 
             default: //DO NOTHING
@@ -106,6 +84,7 @@ public class DashboardFragmentActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
     public void loadClientList() {
 
@@ -117,12 +96,18 @@ public class DashboardFragmentActivity extends ActionBarActivity {
 
     }
 
-    public void openCreateClient(){
-        CreateNewClientFragment createNewClientFragment = new CreateNewClientFragment();
+    public void openCreateClient() {
+        Intent intent = new Intent(this, CreateNewClientActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.addToBackStack(FragmentConstants.FRAG_CREATE_NEW_CLIENT);
-        fragmentTransaction.replace(R.id.dashboard_global_container, createNewClientFragment);
+        fragmentTransaction.replace(R.id.dashboard_global_container, getSupportFragmentManager().findFragmentByTag("newClient"));
         fragmentTransaction.commit();
+
     }
 }
 
