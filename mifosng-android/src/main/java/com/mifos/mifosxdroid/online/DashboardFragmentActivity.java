@@ -5,41 +5,24 @@
 
 package com.mifos.mifosxdroid.online;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Toast;
-
 import com.mifos.mifosxdroid.OfflineCenterInputActivity;
 import com.mifos.mifosxdroid.R;
-import com.mifos.utils.Constants;
 import com.mifos.utils.FragmentConstants;
-import com.mifos.utils.MifosApplication;
-
-import javax.annotation.Resource;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-import butterknife.OnEditorAction;
 
 /**
  * Created by ishankhanna on 09/02/14.
  */
-
 
 public class DashboardFragmentActivity extends ActionBarActivity {
 
@@ -49,6 +32,7 @@ public class DashboardFragmentActivity extends ActionBarActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG,getResources().getString(R.string.login_successful));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         HomeFragment homeFragment=new HomeFragment();
@@ -56,24 +40,13 @@ public class DashboardFragmentActivity extends ActionBarActivity {
         fragmentTransaction.replace(R.id.dashboard_global_container, homeFragment, "HomeFragment");
         fragmentTransaction.commit();
        //to enable home button
-        getSupportActionBar().setDisplayOptions(android.support.v7.app.ActionBar.DISPLAY_HOME_AS_UP| android.support.v7.app.ActionBar.DISPLAY_SHOW_TITLE);
+        getSupportActionBar().setDisplayOptions(android.support.v7.app.ActionBar.DISPLAY_HOME_AS_UP | android.support.v7.app.ActionBar.DISPLAY_SHOW_TITLE);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_launcher);
         getSupportActionBar().setSubtitle(R.string.home);
-
-
-        /*actionBar.setLogo(R.mipmap.ic_launcher);*/
-
     }
 
-    public void popStacEntryFragments()
-    {
-        if(getSupportFragmentManager().getBackStackEntryCount()!=0)
-        {
-            getSupportFragmentManager().popBackStackImmediate();
-        }
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -82,7 +55,42 @@ public class DashboardFragmentActivity extends ActionBarActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    protected void onResume() {
+        Log.i(TAG,getResources().getString(R.string.dashboard_onResume));
+        super.onResume();
+        //on resume there can be fragments present in the backstack. Check if there are such fragments if present start those fragments
+        if(getSupportFragmentManager().getBackStackEntryCount()!=0)
+        {
+            FragmentManager.BackStackEntry backEntry=getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1);
+            String fragmentName=backEntry.getName();
+            System.out.println("fragment name"+fragmentName);
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(fragmentName);
+            if(fragmentName== FragmentConstants.FRAG_CLIENT_SEARCH)
+            {
+                startClientSearchFragment(fragment,fragmentName);
+            }
+            else {
 
+                startFragmentPresentInBackStack(fragment, fragmentName);
+            }
+        }
+
+    }
+
+    public void startClientSearchFragment(Fragment fragment,String TAG)
+    {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.home_dashboard_container, fragment,TAG);
+        fragmentTransaction.commit();
+    }
+    public void startFragmentPresentInBackStack(Fragment fragment,String TAG)
+    {
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.dashboard_global_container, fragment,TAG);
+        fragmentTransaction.commit();
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -109,26 +117,22 @@ public class DashboardFragmentActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
+
     public boolean onSupportNavigateUp() {
         return super.onSupportNavigateUp();
     }
 
-
-
     @Override
     public void onBackPressed() {
-        EditText editText=(EditText)findViewById(R.id.et_search_by_id);
-        if(editText!=null) {
+        EditText editText = (EditText) findViewById(R.id.et_search_by_id);
+        if (editText != null) {
             editText.setText("");
 
         }
         super.onBackPressed();
-        if(getSupportFragmentManager().getBackStackEntryCount()==0)
-        {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
             getSupportActionBar().setSubtitle(R.string.home);
         }
-
     }
 }
 

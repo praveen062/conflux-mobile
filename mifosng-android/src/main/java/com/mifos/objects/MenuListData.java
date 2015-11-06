@@ -23,7 +23,6 @@ public class MenuListData {
             MenuList menuList = new MenuList();
             menuList.name = menuListArray[i];
             menuList.imageName=menuListArray[i].replaceAll("\\s+","").toLowerCase();
-            System.out.println("image name is "+menuList.imageName);
             list.add(menuList);
 
         }

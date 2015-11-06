@@ -50,6 +50,9 @@ public class ClientSearchFragment extends Fragment implements AdapterView.OnItem
     Button bt_searchClient;*/
     @InjectView(R.id.lv_searchResults)
     ListView lv_searchResults;
+    private String searchQuery;
+
+    InputMethodManager inputMethodManager;
 
     View rootView;
     List<String> clientNames = new ArrayList<String>();
@@ -64,9 +67,7 @@ public class ClientSearchFragment extends Fragment implements AdapterView.OnItem
         this.searchQuery = searchQuery;
     }
 
-    private String searchQuery;
 
-    InputMethodManager inputMethodManager;
 
 
 

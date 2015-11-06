@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -92,6 +93,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_home, null);
        ButterKnife.inject(this, rootView);
+        Log.i(TAG, getResources().getString(R.string.searchbar));
         loadmenufragment();
 
         et_searchById.setText("");
@@ -109,29 +111,35 @@ public class HomeFragment extends Fragment {
         MenuListData.setMenuListArray(strings);
         GetMenuListFragment getFragment = new GetMenuListFragment();
         FragmentTransaction fragmentTransaction=getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.home_dashboard_container,getFragment,"list fragment");
+        fragmentTransaction.replace(R.id.home_dashboard_container, getFragment, "list fragment");
         fragmentTransaction.commit();
     }
 
     @OnClick(R.id.bt_searchClient)
     public void SearchClient()
     {
-
+        popStacEntryFragments();
         String clientId=et_searchById.getText().toString().trim();
+        clientSearchFragment=clientSearchFragment.newInstance();
         clientSearchFragment.setSearchQuery(clientId);
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.addToBackStack(FragmentConstants.FRAG_CLIENT_SEARCH);
         fragmentTransaction.replace(R.id.home_dashboard_container, clientSearchFragment, FragmentConstants.FRAG_CLIENT_SEARCH);
         fragmentTransaction.commit();
     }
 
 
+    public void popStacEntryFragments() {
+        if(getActivity().getSupportFragmentManager().getBackStackEntryCount()!=0)
+        {
+            getActivity().getSupportFragmentManager().popBackStackImmediate();
+        }
+    }
 
     @Override
     public void onResume() {
         super.onResume();
         et_searchById.setText("");
-        Toast.makeText(getActivity(),"on Resume",Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -141,7 +149,6 @@ public class HomeFragment extends Fragment {
        /* hideKeyboard();*/
 
         super.onPause();
-        Toast.makeText(getActivity(),"on Pause",Toast.LENGTH_LONG).show();
     }
 
     /*

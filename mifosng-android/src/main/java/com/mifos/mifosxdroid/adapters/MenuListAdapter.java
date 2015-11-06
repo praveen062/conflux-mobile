@@ -32,7 +32,6 @@ public class MenuListAdapter extends RecyclerView.Adapter<MenuListAdapter.ViewHo
 
 
     public MenuListAdapter(Context context) {
-        System.out.println("Constructor "+context );
         this.mContext = context;
     }
 
@@ -48,9 +47,8 @@ public class MenuListAdapter extends RecyclerView.Adapter<MenuListAdapter.ViewHo
 
 
         holder.menuName.setText(place.name);
-        System.out.println("Before " + mContext);
-        Picasso.with(mContext).load(place.getImageResourceId(mContext)).resize(75,75).into(holder.menuImage);
-        System.out.println("get Fragment base context" + mContext);
+        Picasso.with(mContext).load(place.getImageResourceId(mContext)).fit().into(holder.menuImage);
+        //Picasso.with(mContext).load(place.getImageResourceId(mContext)).resize(75,75).into(holder.menuImage);
         Bitmap photo = BitmapFactory.decodeResource(mContext.getResources(), place.getImageResourceId(mContext));
 
         Palette.generateAsync(photo, new Palette.PaletteAsyncListener() {

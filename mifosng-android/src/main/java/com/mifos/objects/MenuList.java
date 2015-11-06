@@ -16,11 +16,7 @@ public class MenuList {
     public String imageName;
 
     public int getImageResourceId(Context context) {
-        System.out.println("MenuList base context" + context);
         String[] strings=context.getResources().getStringArray(R.array.menu_list);
-        System.out.println("string 0 "+strings[0]+"strings 1 "+strings[1]);
-        System.out.println("array is " + context.getResources().getStringArray(R.array.menu_list));
-        System.out.println("image id " + context.getResources().getIdentifier(this.imageName, "drawable", context.getPackageName()));
         return context.getResources().getIdentifier(this.imageName, "drawable", context.getPackageName());
     }
 }

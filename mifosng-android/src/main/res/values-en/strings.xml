@@ -197,9 +197,15 @@
     <string name="large_text">Large Text</string>
     <string name="product_name">Product Name</string>
     <string name="valid">Valid</string>
+    <!--Strings used in printing the logs-->
+    <string name="login_successful">Login successful. Dashboard has be started</string>
+    <string name="dashboard_onResume">Dashboard has been Restarted</string>
+    <string name="searchbar">SearchBar has been Created</string>
+    <string name="menu_options">Menu items has been populated in home fragment</string>
     <string-array name="menu_list">
         <item>Create Client</item>
-        <item>Clients List</item>
+        <item>Create New Center</item>
+        <!--<item>Clients List</item>-->
         <item>Collection Sheet</item>
         <item>Center List</item>
     </string-array>

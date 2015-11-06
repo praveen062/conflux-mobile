@@ -17,7 +17,8 @@
 <FrameLayout
 android:id="@+id/dashboard_global_container"
 android:layout_width="match_parent"
-android:layout_height="456dp">
+android:layout_height="fill_parent"
+    android:background="#ffffff">
 
 
 </FrameLayout>

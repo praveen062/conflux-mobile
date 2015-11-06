@@ -118,6 +118,8 @@ public class CreateCenterFragment extends Fragment implements MFDatePicker.OnDat
     private String activationDateString;
     private String submissionDateString;
 
+    final String TAG=CreateCenterFragment.class.getSimpleName();
+
 
     // TODO: Rename and change types and number of parameters
     public static CreateCenterFragment newInstance(String param1, String param2) {
@@ -131,6 +133,7 @@ public class CreateCenterFragment extends Fragment implements MFDatePicker.OnDat
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG,"Create a New Center");
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
@@ -209,7 +212,8 @@ public class CreateCenterFragment extends Fragment implements MFDatePicker.OnDat
                 @Override
                 public void success(CenterCreationResponse centerCreationResponse, Response response) {
                     safeUIBlockingUtility.safelyUnBlockUI();
-                    Toast.makeText(getActivity(),"The Center with the name "+centerPayload.getName()+" has been  created successfully ",Toast.LENGTH_LONG).show();
+                    Log.i(TAG,"A new Center has been created successfully ");
+                    Toast.makeText(getActivity(),"A New Center with the name "+centerPayload.getName()+" has been  created successfully ",Toast.LENGTH_LONG).show();
 
                     getActivity().onBackPressed();
                 }
@@ -217,6 +221,7 @@ public class CreateCenterFragment extends Fragment implements MFDatePicker.OnDat
                 @Override
                 public void failure(RetrofitError error) {
                     safeUIBlockingUtility.safelyUnBlockUI();
+                    Log.e(TAG,"Unsuccessfull "+API.userErrorMessage);
                     Toast.makeText(getActivity(),"unsuccessful \n"+ API.userErrorMessage,Toast.LENGTH_LONG).show();
                 }
             });
@@ -381,7 +386,7 @@ public void changeActivatedate(View view)
 
                                                                                                                                                                      }
 
-                                                                                                                                                                     Log.d("AutocompleteContacts", "Position : " + i + " Office : " + adapterView.getItemAtPosition(i));
+                                                                                                                                                                     Log.d("AutocompleteOffice", "Position : " + i + " Office : " + adapterView.getItemAtPosition(i));
                                                                                                                                                                  }
                                                                                                                                                              }
                                                                                                            );
@@ -451,7 +456,7 @@ public void changeActivatedate(View view)
                                                                      @Override
                                                                      public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                                                          staffId = staffNameIdHashMap.get(adapterView.getItemAtPosition(i));
-                                                                         Log.d("AutocompleteContacts", "Position:" + i + " Staff Name :" + adapterView.getItemAtPosition(i));
+                                                                         Log.d("AutocompleteStaff", "Position:" + i + " Staff Name :" + adapterView.getItemAtPosition(i));
                                                                      }
                                                                  }
                 );

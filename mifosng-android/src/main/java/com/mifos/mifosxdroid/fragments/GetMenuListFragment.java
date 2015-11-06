@@ -8,13 +8,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mifos.mifosxdroid.R;
@@ -22,8 +27,13 @@ import com.mifos.mifosxdroid.adapters.MenuListAdapter;
 import com.mifos.mifosxdroid.online.CentersActivity;
 import com.mifos.mifosxdroid.online.ClientListFragment;
 import com.mifos.mifosxdroid.online.CreateCenterFragment;
-import com.mifos.mifosxdroid.online.CreateNewClientFragment;
+import com.mifos.mifosxdroid.online.CreateNewClientActivity;
 import com.mifos.utils.FragmentConstants;
+import com.squareup.picasso.Picasso;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
 
 
 public class GetMenuListFragment extends Fragment {
@@ -37,6 +47,29 @@ public class GetMenuListFragment extends Fragment {
     private boolean isListView;
 
     Fragment newFragment;
+
+    String TAG=GetMenuListFragment.class.getSimpleName();
+    @InjectView(R.id.btn_create_new_client)
+    ImageButton btn_create_client;
+    @InjectView(R.id.linear_layout_create_client)
+    LinearLayout linearLayout_create_client;
+    @InjectView(R.id.text_create_new_client)
+    TextView textView_create_new_client;
+    @InjectView(R.id.btn_create_new_center)
+    ImageButton btn_create_center;
+    @InjectView(R.id.linear_layout_create_center)
+    LinearLayout linearLayout_create_center;
+    @InjectView(R.id.text_create_new_center)
+    TextView textView_create_new_center;
+    @InjectView(R.id.btn_collection_sheet)
+    ImageButton btn_collection_sheet;
+    @InjectView(R.id.linear_layout_center_list)
+    LinearLayout linearLayout_center_list;
+    @InjectView(R.id.text_center_list)
+    TextView textView_center_listr;
+    @InjectView(R.id.btn_center_list)
+    ImageButton btn_center_list;
+    String FRAG_TAG;
 
 
     // TODO: Rename and change types and number of parameters
@@ -54,47 +87,68 @@ public class GetMenuListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        Log.i(TAG, getResources().getString(R.string.menu_options));
         rootView= inflater.inflate(R.layout.fragment_get_menu_recyclerview, null);
+        ButterKnife.inject(this,rootView);
 
 
-        System.out.println("rootview "+rootView);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list);
+        Picasso.with(getActivity()).load(R.drawable.createclient).fit().into(btn_create_client);
+        Picasso.with(getActivity()).load(R.drawable.createnewcenter).fit().into(btn_create_center);
+        Picasso.with(getActivity()).load(R.drawable.collectionsheet).fit().into(btn_collection_sheet);
+        Picasso.with(getActivity()).load(R.drawable.centerlist).fit().into(btn_center_list);
+
+      /*  mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list);
         mStaggeredLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mStaggeredLayoutManager);
         mRecyclerView.setHasFixedSize(false);
-
-        //Data size is fixed - improves performance
         mAdapter = new MenuListAdapter(getActivity().getApplicationContext());
-        System.out.println("get Fragment base context"+getActivity().getApplicationContext());
         mRecyclerView.setAdapter(mAdapter);
-
         mAdapter.setOnItemClickListener(onItemClickListener);
-
-        isListView = true;
-
-
+        isListView = true;*/
         return rootView;
     }
 
+    @OnClick(R.id.btn_create_new_client)
+    public void createClient(View view)
+    {
+        Log.i(TAG, "Create New Client has been initiated by use ");
+        popStacEntryFragments();
+        startActivity(new Intent(getActivity(), CreateNewClientActivity.class));
+    }
+    @OnClick(R.id.btn_create_new_center)
+    public void createCenter(View view)
+    {
+        Log.i(TAG, "Create New Center has been initiated by use ");
+        popStacEntryFragments();
+        newFragment=new CreateCenterFragment();
+        FRAG_TAG=FragmentConstants.FRAG_CREATE_CENTER;
+        startNewFragment(newFragment, FRAG_TAG);
+    }
+
+    @OnClick(R.id.btn_center_list)
+    public void centerList(View view)
+    {
+        Log.i(TAG, "Center List has been initiated");
+        popStacEntryFragments();
+        startActivity(new Intent(getActivity(), CentersActivity.class));
+    }
 
     MenuListAdapter.OnItemClickListener onItemClickListener= new MenuListAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
-            Toast.makeText(getActivity(), "position " + position, Toast.LENGTH_LONG).show();
-            String TAG;
+            String FRAG_TAG;
+            Log.i(TAG,"menu option selected is "+position);
             switch (position)
             {
                 case 0:popStacEntryFragments();
-                    newFragment= new CreateNewClientFragment();
-                    TAG=FragmentConstants.FRAG_CREATE_NEW_CLIENT;
-                    startNewFragment(newFragment,TAG);
+                    startActivity(new Intent(getActivity(), CreateNewClientActivity.class));
                     break;
                 case 1: popStacEntryFragments();
                     /*newFragment = new ClientListFragment();
                     TAG=FragmentConstants.FRAG_CLIENT_SEARCH;*/
                     newFragment=new CreateCenterFragment();
-                    TAG=FragmentConstants.FRAG_CREATE_CENTER;
-                    startNewFragment(newFragment,TAG);
+                    FRAG_TAG=FragmentConstants.FRAG_CREATE_CENTER;
+                    startNewFragment(newFragment,FRAG_TAG);
                     break;
                 case 3: popStacEntryFragments();
                     startActivity(new Intent(getActivity(), CentersActivity.class));
@@ -111,8 +165,13 @@ public class GetMenuListFragment extends Fragment {
     public void onButtonPressed() {
 
     }
-    public void popStacEntryFragments()
-    {
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    public void popStacEntryFragments() {
         if(getActivity().getSupportFragmentManager().getBackStackEntryCount()!=0)
         {
             getActivity().getSupportFragmentManager().popBackStackImmediate();
@@ -120,6 +179,8 @@ public class GetMenuListFragment extends Fragment {
     }
 public void startNewFragment(Fragment fragment,String TAG)
 {
+
+    Log.i(TAG, "Start the Fragments");
     FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
     fragmentTransaction.addToBackStack(TAG);
     fragmentTransaction.replace(R.id.dashboard_global_container, fragment,TAG);
