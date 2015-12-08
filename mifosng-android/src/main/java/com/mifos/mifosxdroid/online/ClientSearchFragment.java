@@ -106,20 +106,6 @@ public void search()
         Toast.makeText(getActivity(), "No Search Query Entered!", Toast.LENGTH_SHORT).show();
     }
 }
-    /*@OnClick(R.id.bt_searchClient)
-    public void performSearch() {
-
-        if (!et_searchById.getEditableText().toString().trim().isEmpty()) {
-            searchQuery = et_searchById.getEditableText().toString().trim();
-            findClients(searchQuery);
-
-        } else {
-            Toast.makeText(getActivity(), "No Search Query Entered!", Toast.LENGTH_SHORT).show();
-        }
-
-
-    }*/
-
 
     public void findClients(final String clientName) {
 
@@ -173,8 +159,6 @@ public void search()
     public void onPause() {
 
         //Fragment getting detached, keyboard if open must be hidden
-       /* hideKeyboard();*/
-        Toast.makeText(getActivity(),"search fragment resume",Toast.LENGTH_LONG).show();
         super.onPause();
     }
 

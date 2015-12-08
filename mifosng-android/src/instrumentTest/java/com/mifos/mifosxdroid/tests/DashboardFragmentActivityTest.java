@@ -92,7 +92,7 @@ public class DashboardFragmentActivityTest extends ActivityInstrumentationTestCa
     public void testClientListFragmentShowed(){
         //clicking the button
         getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-        getInstrumentation().invokeMenuActionSync(dashboardActivity, R.id.mItem_list, 0);
+       // getInstrumentation().invokeMenuActionSync(dashboardActivity, R.id.mItem_list, 0);
 
         //if something is wrong, invokeMenuActionSync will take an exception
 
@@ -105,7 +105,7 @@ public class DashboardFragmentActivityTest extends ActivityInstrumentationTestCa
 
         //clicking the button
         getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_MENU);
-        getInstrumentation().invokeMenuActionSync(getActivity(), R.id.item_centers, 0);
+       // getInstrumentation().invokeMenuActionSync(getActivity(), R.id.item_centers, 0);
 
         Activity startedActivity = getInstrumentation().waitForMonitorWithTimeout(monitor, 6000);
         assertNotNull(startedActivity);

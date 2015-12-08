@@ -37,7 +37,7 @@
     <string name="external_id">External ID</string>
     <string name="activation_date">Activation Date</string>
     <string name="office">Office</string>
-    <string name="group">Group</string>
+    <string name="group">Groups</string>
     <string name="cancel">Cancel</string>
     <string name="review_payment">Review Payment</string>
     <string name="center_name">Center Name</string>
@@ -59,8 +59,10 @@
     <string name="generate_collection_sheet">Generate Collection Sheet</string>
     <string name="clear_data">Clear Data</string>
     <string name="branch_id">Branch Id</string>
+    <string name="cgt">CGT</string>
     <!-- General Terms End Here -->
 
+    <string name="home_fragment">Home Fragment</string>
 
     <!-- Group Terms Begin Here -->
     <string name="active">Active</string>
@@ -176,6 +178,8 @@
     <!-- DropDown Defaults -->
     <string name="spinner_office">Select Office</string>
     <string name="spinner_staff">Select Loan Officer</string>
+    <string name="spinner_staff_1">Select Staff 1</string>
+    <string name="spinner_staff_2">Select Staff 2</string>
     <string name="spinner_center">Select Center</string>
     <string name="spinner_group">Select Group</string>
     <string name="total_due">Total Due</string>
@@ -234,7 +238,16 @@
         <item>Male</item>
     </string-array>
     <string name="title_activity_create_client"></string>
->>>>>>> exception handling has been fixed and new center creation feature has been added
-
-
+    <!--grt fragment string -->
+    <string name="grt">GRT</string>
+    <string name="next_grt_date">GRT Next Planned Date</string>
+    <string name="comment">Comment :</string>
+    <string name="planned">Planned Date : </string>
+    <string name="done">Done Date : </string>
+    <string name="reschedule_grt_success">Grt has been rescheduled Successfully</string>
+    <string name="err_staff_names_same">Staff 1 and Staff 2 cannot be same.</string>
+    <string name="err_staff_names_empty">Please select Staff 1 and Staff 2</string>
+    <string name="err_staff_name_one">Please Select Staff 1.</string>
+    <string name="err_staff_name_two">Please Select Staff 2.</string>
+    <string name="attendance">Attendance</string>
 </resources>

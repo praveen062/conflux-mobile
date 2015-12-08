@@ -15,10 +15,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -26,6 +24,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,7 +37,7 @@ import com.mifos.objects.db.CenterCreationResponse;
 import com.mifos.objects.organisation.Office;
 import com.mifos.objects.organisation.Staff;
 import com.mifos.services.API;
-import com.mifos.services.data.CenterPayload;
+import com.mifos.objects.CenterPayload;
 import com.mifos.utils.FragmentConstants;
 import com.mifos.utils.MifosApplication;
 import com.mifos.utils.SafeUIBlockingUtility;
@@ -78,9 +77,9 @@ public class CreateCenterFragment extends Fragment implements MFDatePicker.OnDat
     @InjectView(R.id.tv_office)
     TextView tv_office;
     @InjectView(R.id.et_office)
-    AutoCompleteTextView autoCompleteTextViewOffice;
+    Spinner spinnerOffice;
     @InjectView(R.id.et_staff)
-    AutoCompleteTextView autoCompleteTextViewStaff;
+    Spinner spinnerStaff;
     @InjectView(R.id.cb_center_active_status)
     CheckBox cb_centerActiveStatus;
     @InjectView(R.id.line_active)
@@ -166,6 +165,7 @@ public class CreateCenterFragment extends Fragment implements MFDatePicker.OnDat
 
         if(savedInstanceState==null)
         {
+            Log.i(TAG,"Populate the list of Offices");
             inflateOfficeSpinner();
         }
         inflateSubmissionDate();
@@ -201,10 +201,7 @@ public class CreateCenterFragment extends Fragment implements MFDatePicker.OnDat
         {
             return;
         }
-        if(!validStaffname())
-        {
-            return;
-        }
+
         else
         {
             safeUIBlockingUtility.safelyBlockUI();
@@ -221,8 +218,8 @@ public class CreateCenterFragment extends Fragment implements MFDatePicker.OnDat
                 @Override
                 public void failure(RetrofitError error) {
                     safeUIBlockingUtility.safelyUnBlockUI();
-                    Log.e(TAG,"Unsuccessfull "+API.userErrorMessage);
-                    Toast.makeText(getActivity(),"unsuccessful \n"+ API.userErrorMessage,Toast.LENGTH_LONG).show();
+                    Log.e(TAG, "Unsuccessfull " + API.userErrorMessage);
+                    Toast.makeText(getActivity(),"Unsuccessful : "+API.userErrorMessage,Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -249,23 +246,20 @@ public class CreateCenterFragment extends Fragment implements MFDatePicker.OnDat
     @OnClick(R.id.btn_create_center)
     public void createCenter(View view)
     {
-
+        Log.i(TAG,"Populate the payload with data ");
         centerPayload=new CenterPayload();
         centerPayload.setName(et_center_name.getText().toString().trim());
         centerPayload.setOfficeId(officeId);
         submissionDateString = et_center_submission_date.getText().toString().trim();
         submissionDateString = submissionDateString.replace("-", " ");
-        System.out.println(et_center_submission_date.getText().toString().trim());
         centerPayload.setSubmittedOnDate(submissionDateString);
-        if(!TextUtils.isEmpty(autoCompleteTextViewStaff.getText().toString().trim())) {
+        if(staffId!=-1) {
             centerPayload.setStaffId(staffId);
         }
 
 
-
         if(checkboxActivate)
         {
-            System.out.println("activation date"+tv_activate_date.getText().toString().trim());
             activationDateString = tv_activate_date.getText().toString().trim();
             activationDateString = activationDateString.replace("-", " ");
             centerPayload.setActive(checkboxActivate);
@@ -278,14 +272,13 @@ public class CreateCenterFragment extends Fragment implements MFDatePicker.OnDat
 
         centerPayload.setExternalId(et_external_id.getText().toString().trim());
         initiateCenterCreation(centerPayload);
-        System.out.println("center payload " + centerPayload);
     }
 
   @OnClick(R.id.tv_active_date)
     public void changeActivationDate(View view)
     {
+        Log.i(TAG,"Change the Activation Date");
         datePickerInput=view.getId();
-        System.out.println(R.id.btn_edit_active_date);
         mfDatePicker = MFDatePicker.newInsance(this);
         mfDatePicker.show(getActivity().getSupportFragmentManager(), FragmentConstants.DFRAG_DATE_PICKER);
     }
@@ -335,68 +328,59 @@ public void changeActivatedate(View view)
         safeUIBlockingUtility.safelyBlockUI();
         ((MifosApplication) getActivity().getApplicationContext()).api.officeService.getAllOffices(new Callback<List<Office>>() {
 
-                                                                                                       @Override
                                                                                                        public void success(List<Office> offices, Response response) {
-                                                                                                           final List<String> officeList = new ArrayList<String>();
 
+                                                                                                           final List<String> officeNames = new ArrayList<String>();
+                                                                                                           officeNames.add(getString(R.string.spinner_office));
+                                                                                                           officeNameIdHashMap.put(getString(R.string.spinner_office), -1);
                                                                                                            for (Office office : offices) {
-                                                                                                               officeList.add(office.getName());
+                                                                                                               officeNames.add(office.getName());
                                                                                                                officeNameIdHashMap.put(office.getName(), office.getId());
                                                                                                            }
-                                                                                                           officeAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
-                                                                                                                  R.layout.simple_spinner_item, officeList);
-                                                                                                           autoCompleteTextViewOffice.setThreshold(1);
 
-                                                                                                           autoCompleteTextViewOffice.setAdapter(officeAdapter);
-                                                                                                           autoCompleteTextViewOffice.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                                                                                           ArrayAdapter<String> officeAdapter = new ArrayAdapter<String>(getActivity(),
+                                                                                                                   android.R.layout.simple_spinner_item, officeNames);
 
+                                                                                                           officeAdapter.notifyDataSetChanged();
+
+                                                                                                           officeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                                                                                           spinnerOffice.setAdapter(officeAdapter);
+
+                                                                                                           spinnerOffice.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                                                                                                @Override
-                                                                                                               public void onItemSelected(AdapterView<?> arg0, View arg1, int position,
-                                                                                                                                          long arg3) {
-                                                                                                                   Log.i(getClass().getName(),"Position:" + position + " Office:" + arg0.getItemAtPosition(position));
+                                                                                                               public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                                                                                                                   // TODO Auto-generated method stub
-                                                                                                                   //Log.d("AutocompleteContacts", "onItemSelected() position " + position);
+                                                                                                                   officeId = officeNameIdHashMap.get(officeNames.get(position));
+
+                                                                                                                   if (officeId != -1) {
+
+                                                                                                                       inflateStaffSpinner(officeId);
+
+                                                                                                                   } else {
+
+                                                                                                                       Toast.makeText(getActivity(), getString(R.string.error_select_office), Toast.LENGTH_SHORT).show();
+
+                                                                                                                   }
+
                                                                                                                }
 
                                                                                                                @Override
-                                                                                                               public void onNothingSelected(AdapterView<?> arg0) {
-                                                                                                                   // TODO Auto-generated method stub
-
-                                                                                                                   InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-                                                                                                                           getActivity().INPUT_METHOD_SERVICE);
-                                                                                                                   imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                                                                                                               public void onNothingSelected(AdapterView<?> parent) {
 
                                                                                                                }
-
                                                                                                            });
-                                                                                                           autoCompleteTextViewOffice.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                                                                                                                                 @Override
-                                                                                                                                                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                                                                                                                                     officeId = officeNameIdHashMap.get(adapterView.getItemAtPosition(i));
-                                                                                                                                                                     Log.i(getClass().getName(),"office Id " + officeId);
 
-                                                                                                                                                                     if (officeId != -1) {
-
-                                                                                                                                                                         inflateStaffSpinner(officeId);
-
-                                                                                                                                                                     } else {
-
-                                                                                                                                                                         Toast.makeText(getActivity(), getString(R.string.error_select_office), Toast.LENGTH_SHORT).show();
-
-                                                                                                                                                                     }
-
-                                                                                                                                                                     Log.d("AutocompleteOffice", "Position : " + i + " Office : " + adapterView.getItemAtPosition(i));
-                                                                                                                                                                 }
-                                                                                                                                                             }
-                                                                                                           );
                                                                                                            safeUIBlockingUtility.safelyUnBlockUI();
+
                                                                                                        }
+
 
                                                                                                        @Override
                                                                                                        public void failure(RetrofitError error) {
                                                                                                            safeUIBlockingUtility.safelyUnBlockUI();
+
                                                                                                            Toast.makeText(getActivity(),API.userErrorMessage,Toast.LENGTH_LONG).show();
+                                                                                                           getActivity().onBackPressed();
                                                                                                        }
                                                                                                    }
         );
@@ -407,7 +391,6 @@ public void changeActivatedate(View view)
 
 
         ((MifosApplication) getActivity().getApplicationContext()).api.staffService.getStaffForOffice(officeId, new Callback<List<Staff>>() {
-            @Override
             public void success(List<Staff> staffs, Response response) {
 
                 final List<String> staffNames = new ArrayList<String>();
@@ -422,53 +405,43 @@ public void changeActivatedate(View view)
 
 
                 ArrayAdapter<String> staffAdapter = new ArrayAdapter<String>(getActivity(),
-                        R.layout.simple_spinner_item, staffNames);
+                        android.R.layout.simple_spinner_item, staffNames);
 
                 staffAdapter.notifyDataSetChanged();
 
-                staffAdapter.setDropDownViewResource(R.layout.simple_spinner_item);
-                autoCompleteTextViewStaff.setThreshold(1);
-                autoCompleteTextViewStaff.setAdapter(staffAdapter);
+                staffAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerStaff.setAdapter(staffAdapter);
 
-                autoCompleteTextViewStaff.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
+                spinnerStaff.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
-                    public void onItemSelected(AdapterView<?> arg0, View arg1, int position,
-                                               long arg3) {
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                        // TODO Auto-generated method stub
-                        //Log.d("AutocompleteContacts", "onItemSelected() position " + position);
+                        int staffId = staffNameIdHashMap.get(staffNames.get(position));
+
+                        if (staffId != -1) {
+
+                        } else {
+
+                            Toast.makeText(getActivity(), getString(R.string.error_select_staff), Toast.LENGTH_SHORT).show();
+
+                        }
+
                     }
 
                     @Override
-                    public void onNothingSelected(AdapterView<?> arg0) {
-                        // TODO Auto-generated method stub
-
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(
-                                getActivity().INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                    public void onNothingSelected(AdapterView<?> parent) {
 
                     }
-
-
                 });
-                autoCompleteTextViewStaff.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                                     @Override
-                                                                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                                         staffId = staffNameIdHashMap.get(adapterView.getItemAtPosition(i));
-                                                                         Log.d("AutocompleteStaff", "Position:" + i + " Staff Name :" + adapterView.getItemAtPosition(i));
-                                                                     }
-                                                                 }
-                );
 
 
             }
 
+
             @Override
             public void failure(RetrofitError retrofitError) {
-
-                System.out.println(retrofitError.getLocalizedMessage());
-
+                Toast.makeText(getActivity(), API.userErrorMessage, Toast.LENGTH_LONG).show();
+                getActivity().onBackPressed();
 
             }
         });
@@ -498,30 +471,12 @@ public void changeActivatedate(View view)
     }
 
 
-    public boolean validStaffname()
-    {
-        result = true;
-        try
-        {
-            if(!TextUtils.isEmpty(autoCompleteTextViewStaff.getText().toString())&&staffId<=0) {
-                throw new RequiredFieldException("Invalid "+getResources().getString(R.string.staff_name), getResources().getString(R.string.invalid_saff_name));
-            }
-        }
-        catch (RequiredFieldException e) {
-            e.notifyUserWithToast(getActivity());
-            result = false;
-        }
-        return result;
-
-    }
 
     public boolean validOfficeName()
     {
         result=true;
         try
         {
-            if(TextUtils.isEmpty(autoCompleteTextViewOffice.getText().toString()))
-                throw  new RequiredFieldException(getResources().getString(R.string.office),getResources().getString(R.string.error_cannot_be_empty));
             if(officeId==-1)
             {
                 throw new InvalidTextInputException(getResources().getString(R.string.the_input),getResources().getString(R.string.office_name), getResources().getString(R.string.is_invalid));
@@ -531,10 +486,6 @@ public void changeActivatedate(View view)
         {
             e.notifyUserWithToast(getActivity());
             result=false;
-        }
-        catch (RequiredFieldException e) {
-            e.notifyUserWithToast(getActivity());
-            result = false;
         }
         return result;
     }

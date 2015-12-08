@@ -102,7 +102,7 @@
             android:name=".online.CentersActivity"
             android:label="@string/title_activity_centers"
             android:parentActivityName=".online.DashboardFragmentActivity"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden|adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.mifos.mifosxdroid.online.DashboardFragmentActivity" />

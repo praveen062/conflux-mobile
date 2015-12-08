@@ -7,6 +7,9 @@ package com.mifos.utils;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by satya on 13/04/14.
  */
@@ -63,6 +66,8 @@ public class Constants {
 
     public static final String CENTER_ID = "centerId";
 
+    public static final String OFFICE_ID = "officeId";
+
     public static final String GROUP_ID = "groupId";
 
     public static final String ENTITY_TYPE = "entityType";
@@ -76,6 +81,11 @@ public class Constants {
     public static final String CALENDAR_INSTANCE_ID = "calendarInstanceId";
 
     public static final String LOCALE = "locale";
+
+    public static final String CGT_READ="READ_CGT";
+    public static final String CGT_WRITE="WRITE_CGT";
+    public static final String ALL_FUNCTIONS="ALL_FUNCTIONS";
+
 
 
     /**
@@ -92,5 +102,21 @@ public class Constants {
     public static final String DATA_TABLE_LOAN_NAME = "More Loan Info";
     public static final String DATA_TABLE_SAVINGS_ACCOUNTS_NAME = "More Savings Account Info";
 
+    /**
+     * User permissions
+     *
+     * */
+    public static final String USER_ALL_PERMISSIONS="ALL_FUNCTIONS";
+    public static final String USER_CGT_READ_PERMISSSION="READ_CGT";
+    public static final String USER_CGT_WRITE_PERMISSSION="WRITE_CGT";
+    public static final String USER_GRT_READ_PERMISSION="READ_GRT";
+    public static final String USER_GRT_WRITE_PERMISSION="WRITE_GRT";
+
+    /**
+     * grt status
+     */
+    public static final String PLANNED = "Planned";
+    public static final String PASS = "PASS";
+    public static final String FAIL = "FAIL";
 
 }

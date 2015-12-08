@@ -8,6 +8,7 @@
 
     <!-- General Terms Begin Here -->
     <string name="datatables">Datatables</string>
+    <string name="status">Status : </string>
     <string name="login">Login</string>
     <string name="search">Search</string>
     <string name="group_name">Group Name</string>

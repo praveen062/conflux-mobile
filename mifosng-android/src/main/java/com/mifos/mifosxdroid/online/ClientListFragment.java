@@ -5,24 +5,33 @@
 
 package com.mifos.mifosxdroid.online;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mifos.mifosxdroid.R;
 import com.mifos.mifosxdroid.adapters.ClientNameListAdapter;
+import com.mifos.objects.CgtData;
+import com.mifos.objects.GrtData;
 import com.mifos.objects.client.Client;
 import com.mifos.objects.client.Page;
+import com.mifos.objects.client.Permission;
+import com.mifos.objects.db.Permissions;
+import com.mifos.objects.group.Group;
+import com.mifos.services.TestAPI;
 import com.mifos.utils.Constants;
 import com.mifos.utils.MifosApplication;
 
@@ -36,6 +45,7 @@ import butterknife.InjectView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import butterknife.OnClick;
 
 
 /**
@@ -49,6 +59,14 @@ public class ClientListFragment extends Fragment {
     @InjectView(R.id.swipe_container)
     SwipeRefreshLayout swipeRefreshLayout;
     View rootView;
+    @InjectView(R.id.buttons)
+    LinearLayout buttons;
+    @InjectView(R.id.user_with_cgt_grt_permission)
+    LinearLayout userWith_cgt_grt_Permission;
+    @InjectView(R.id.user_with_grt_permission)
+    LinearLayout userWith_grt_Permission;
+    @InjectView(R.id.user_with_cgt_permission)
+    LinearLayout userWith_cgt_Permission;
 
     List<Client> clientList = new ArrayList<Client>();
     private Context context;
@@ -59,6 +77,11 @@ public class ClientListFragment extends Fragment {
     //listOffset is used for stting the limit of the api to limit the call to the server till the listoffset is reached to limit-10
     private int listOffset=0;
     private int listLimitOffset=limit;
+    private  int centerId;
+    private  int groupId;
+    int officeId;
+    private String groupName;
+    private OnFragmentInteractionListener mListener;
 
 
     private boolean isInfiniteScrollEnabled = true;
@@ -67,15 +90,23 @@ public class ClientListFragment extends Fragment {
 
     }
 
-    public static ClientListFragment newInstance(List<Client> clientList) {
+    public static ClientListFragment newInstance(int centerId,int groupId,String groupName,int officeId,List<Client> clientList) {
         ClientListFragment clientListFragment = new ClientListFragment();
         clientListFragment.setClientList(clientList);
+        clientListFragment.centerId=centerId;
+        clientListFragment.groupId=groupId;
+        clientListFragment.groupName=groupName;
+        clientListFragment.officeId=officeId;
         return clientListFragment;
     }
 
-    public static ClientListFragment newInstance(List<Client> clientList, boolean isParentFragmentAGroupFragment) {
+    public static ClientListFragment newInstance(int centerid,int groupId,String groupName,int officeId,List<Client> clientList, boolean isParentFragmentAGroupFragment) {
         ClientListFragment clientListFragment = new ClientListFragment();
         clientListFragment.setClientList(clientList);
+        clientListFragment.centerId=centerid;
+        clientListFragment.groupId=groupId;
+        clientListFragment.groupName=groupName;
+        clientListFragment.officeId=officeId;
         if (isParentFragmentAGroupFragment) {
             clientListFragment.setInfiniteScrollEnabled(false);
         }
@@ -90,6 +121,7 @@ public class ClientListFragment extends Fragment {
         setHasOptionsMenu(true);
         context = getActivity().getApplicationContext();
         ButterKnife.inject(this, rootView);
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setSubtitle(R.string.client);
 
         swipeRefreshLayout.setColorScheme(R.color.blue_light,
                 R.color.green_light,
@@ -103,9 +135,81 @@ public class ClientListFragment extends Fragment {
             }
         });
 
+        List<Permissions> associatedPermission=Permissions.listAll(Permissions.class);
+        List<String> listUserPermissions=new ArrayList<String>();
+        for(Permissions permission:associatedPermission)
+        {
+            listUserPermissions.add(permission.getPermissions());
+        }
+        if(listUserPermissions.contains(Constants.ALL_FUNCTIONS)||(listUserPermissions.contains(Constants.USER_CGT_WRITE_PERMISSSION)&&listUserPermissions.contains(Constants.USER_GRT_WRITE_PERMISSION)))
+        {
+            buttons.setVisibility(View.VISIBLE);
+            userWith_cgt_grt_Permission.setVisibility(View.VISIBLE);
+        }
+        else if(listUserPermissions.contains(Constants.USER_GRT_WRITE_PERMISSION))
+        {
+            buttons.setVisibility(View.VISIBLE);
+            userWith_grt_Permission.setVisibility(View.VISIBLE);
+        }
+        else if(listUserPermissions.contains(Constants.USER_CGT_WRITE_PERMISSSION))
+        {
+            buttons.setVisibility(View.VISIBLE);
+            userWith_cgt_Permission.setVisibility(View.VISIBLE);
+        }
         fetchClientList();
 
         return rootView;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @OnClick(R.id.cgt)
+    public void requestforCGT(View view)
+    {
+        TestAPI testAPI=new TestAPI();
+        testAPI.cgt.getCgt(new Callback<List<CgtData>>() {
+            @Override
+            public void success(List<CgtData> cgtDatas, Response response) {
+
+                mListener.loadCGTFragmentForTheGroup(centerId,groupId,groupName,cgtDatas,clientList);
+
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                System.out.println("failure " + error);
+
+            }
+        });
+    }
+
+
+    @OnClick(R.id.grt)
+    public void loadGrtFragment(View view)
+    {
+        TestAPI testAPI = new TestAPI();
+        testAPI.grt.getGrt(new Callback<GrtData>() {
+            @Override
+            public void success(GrtData grtData, Response response) {
+                System.out.println("grt data " + grtData);
+                mListener.loadGRTFragmentFortheGroup(centerId, groupId, groupName, officeId,grtData,clientList);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+
     }
 
     public void inflateClientList() {
@@ -255,6 +359,10 @@ public class ClientListFragment extends Fragment {
 
     }
 
+    public interface OnFragmentInteractionListener {
+        public void loadCGTFragmentForTheGroup(int centerId,int groupId,String groupName,List<CgtData> cgtDatas,List<Client> clientList);
+        public void loadGRTFragmentFortheGroup(int centerId,int groupId,String groupName,int officeId,GrtData grtData,List<Client> clientList);
+    }
     public List<Client> getClientList() {
         return clientList;
     }

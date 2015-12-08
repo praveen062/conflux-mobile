@@ -10,13 +10,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.mifos.mifosxdroid.R;
 import com.mifos.mifosxdroid.adapters.GroupListAdapter;
@@ -24,6 +27,7 @@ import com.mifos.objects.client.Client;
 import com.mifos.objects.group.CenterWithAssociations;
 import com.mifos.objects.group.GroupWithAssociations;
 import com.mifos.utils.Constants;
+import com.mifos.utils.FragmentConstants;
 import com.mifos.utils.MifosApplication;
 import com.mifos.utils.SafeUIBlockingUtility;
 
@@ -31,6 +35,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -54,7 +59,8 @@ public class GroupListFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    int centerId;
+    int centerId,officeId;
+    final String TAG=this.getClass().getSimpleName();
 
     public static GroupListFragment newInstance(int centerId) {
         GroupListFragment fragment = new GroupListFragment();
@@ -86,12 +92,13 @@ public class GroupListFragment extends Fragment {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         actionBar = activity.getSupportActionBar();
         ButterKnife.inject(this, rootView);
-        actionBar.setTitle(getResources().getString(R.string.group));
+        ((ActionBarActivity)getActivity()).getSupportActionBar().setSubtitle(R.string.group);
 
         inflateGroupList();
 
         return rootView;
     }
+
 
 
     @Override
@@ -113,12 +120,12 @@ public class GroupListFragment extends Fragment {
 
 
     public interface OnFragmentInteractionListener {
-
-        public void loadClientsOfGroup(List<Client> clientList);
+        //list out all the clients of the group
+        public void loadClientsOfGroup(int centerId,int groupId,String groupName,int officeId,List<Client> clientList);
     }
 
     public void inflateGroupList() {
-
+        Log.i(TAG,"List out all the groups of the center");
         safeUIBlockingUtility.safelyBlockUI();
 
         ((MifosApplication) getActivity().getApplicationContext()).api.centerService.getAllGroupsForCenter(centerId, new Callback<CenterWithAssociations>() {
@@ -133,15 +140,16 @@ public class GroupListFragment extends Fragment {
                         @Override
                         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                            int groupId = centerWithAssociations.getGroupMembers().get(i).getId();
+                            final int groupId = centerWithAssociations.getGroupMembers().get(i).getId();
+                            final String groupName= centerWithAssociations.getGroupMembers().get(i).getName();
 
-                            ((MifosApplication) getActivity().getApplicationContext()).api.groupService.getGroupWithAssociations(groupId,
+                                    ((MifosApplication) getActivity().getApplicationContext()).api.groupService.getGroupWithAssociations(groupId,
                                     new Callback<GroupWithAssociations>() {
                                         @Override
                                         public void success(GroupWithAssociations groupWithAssociations, Response response) {
 
                                             if(groupWithAssociations != null) {
-                                                mListener.loadClientsOfGroup(groupWithAssociations.getClientMembers());
+                                                mListener.loadClientsOfGroup(centerId,groupId,groupName,groupWithAssociations.getOfficeId(),groupWithAssociations.getClientMembers());
                                             }
                                         }
 

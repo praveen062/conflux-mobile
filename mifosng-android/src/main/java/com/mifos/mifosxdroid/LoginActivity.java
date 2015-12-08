@@ -28,9 +28,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.mifos.exceptions.ShortOfLengthException;
 import com.mifos.mifosxdroid.online.DashboardFragmentActivity;
 import com.mifos.objects.User;
+import com.mifos.objects.db.Permissions;
 import com.mifos.objects.noncore.DisplayAlert;
 import com.mifos.services.API;
 import com.mifos.utils.Constants;
@@ -41,6 +43,7 @@ import org.apache.http.HttpStatus;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -123,10 +126,16 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
     @Override
     public void success(User user, Response response) {
         ((MifosApplication) getApplication()).api = api;
+        Permissions permissions;
+        List<String> permission=user.getPermissions();
+        for(String eachPermission:permission)
+        {
+            permissions=new Permissions(eachPermission);
+            permissions.save();
+        }
         progressDialog.dismiss();
         Toast.makeText(context, getString(R.string.toast_welcome)+" " + user.getUsername(), Toast.LENGTH_SHORT).show();
         saveLastAccessedInstanceUrl(url);
-       // saveLastAccessedInstanceDomainName(url);
         String lastAccessedTenantIdentifier = TenantIdentifier;
         saveLastAccessedTenant(lastAccessedTenantIdentifier);
         saveAuthenticationKey("Basic " + user.getBase64EncodedAuthenticationKey());
@@ -193,10 +202,7 @@ public class LoginActivity extends ActionBarActivity implements Callback<User>{
         try {
             if ( url !=""||TenantIdentifier!="") {
                 if (validateUserInputs())
-
-                    Toast.makeText(context, "URL: " + url + "    Tenant:" + TenantIdentifier, Toast.LENGTH_LONG).show();
-
-
+                // Toast.makeText(context, "URL: " + url + "    Tenant:" + TenantIdentifier, Toast.LENGTH_LONG).show();
                 progressDialog.show();
                 //api = new API(instanceURL, et_tenantIdentifier.getEditableText().toString().trim(), shouldByPassSSLSecurity);
                 api = new API(url, TenantIdentifier, shouldByPassSSLSecurity);

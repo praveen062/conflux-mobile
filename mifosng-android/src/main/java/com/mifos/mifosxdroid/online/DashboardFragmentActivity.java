@@ -16,11 +16,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+
+import com.google.gson.Gson;
 import com.mifos.mifosxdroid.OfflineCenterInputActivity;
 import com.mifos.mifosxdroid.R;
+import com.mifos.objects.UserPermissions;
+import com.mifos.objects.client.Permission;
 import com.mifos.utils.FragmentConstants;
+import com.mifos.utils.MifosApplication;
+import com.orm.query.Select;
+import com.mifos.objects.db.Permissions;
 
-
+import java.util.ArrayList;
+import java.util.List;
 
 public class DashboardFragmentActivity extends ActionBarActivity {
 
@@ -30,12 +38,16 @@ public class DashboardFragmentActivity extends ActionBarActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG,getResources().getString(R.string.login_successful));
+        Log.i(TAG, getResources().getString(R.string.login_successful));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         HomeFragment homeFragment=new HomeFragment();
         FragmentTransaction fragmentTransaction=getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.dashboard_global_container, homeFragment, "HomeFragment");
+      /* List<Permissions> permission=Permissions.listAll(Permissions.class);
+
+       */
+
+        fragmentTransaction.replace(R.id.dashboard_global_container, homeFragment, getApplication().getResources().getString(R.string.home_fragment));
         fragmentTransaction.commit();
        //to enable home button
         getSupportActionBar().setDisplayOptions(android.support.v7.app.ActionBar.DISPLAY_HOME_AS_UP | android.support.v7.app.ActionBar.DISPLAY_SHOW_TITLE);

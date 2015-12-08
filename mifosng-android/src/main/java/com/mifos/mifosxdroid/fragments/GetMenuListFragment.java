@@ -28,6 +28,7 @@ import com.mifos.mifosxdroid.online.CentersActivity;
 import com.mifos.mifosxdroid.online.ClientListFragment;
 import com.mifos.mifosxdroid.online.CreateCenterFragment;
 import com.mifos.mifosxdroid.online.CreateNewClientActivity;
+import com.mifos.mifosxdroid.online.GenerateCollectionSheet;
 import com.mifos.utils.FragmentConstants;
 import com.squareup.picasso.Picasso;
 
@@ -106,6 +107,13 @@ public class GetMenuListFragment extends Fragment {
         mAdapter.setOnItemClickListener(onItemClickListener);
         isListView = true;*/
         return rootView;
+    }
+
+
+    @OnClick(R.id.btn_collection_sheet)
+    public void collectionsheet(View view)
+    {
+        startActivity(new Intent(getActivity(), GenerateCollectionSheet.class));
     }
 
     @OnClick(R.id.btn_create_new_client)
